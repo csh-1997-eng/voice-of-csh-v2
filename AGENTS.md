@@ -1,6 +1,10 @@
 # Codex Agent Configuration
 
-**Core Rules:** `rules/BASE_RULES.md` — Always read this first.
+**Start Here:** Read `AI_RULES.md` first for project configuration and workflow policies.
+
+**AI_RULES.md will direct you to:**
+- `rules/BASE_RULES.md` - Core coding principles, voice, and style
+- `rules/PROJECT_SPECIFIC.md` - Project-specific overrides and context
 
 **Skills Library:** `rules/skills/` contains specialized workflows:
 - `security_audit.md` - Security-focused reviews
@@ -10,6 +14,10 @@
 - `testing.md` - Testing patterns
 - `production.md` - Production operations
 
-**Project Config:** `AI_RULES.md` defines dependency rules, diff policies, and repo-specific commands.
+**How to Use Skills:** Load skills as needed based on task type. For example, when reviewing authentication code, read BASE_RULES.md + PROJECT_SPECIFIC.md + security_audit.md. When building a quick demo, read BASE_RULES.md + PROJECT_SPECIFIC.md + prototyping.md.
 
-**How to Use Skills:** Load skills as needed based on task type. For example, when reviewing authentication code, read BASE_RULES.md + security_audit.md. When building a quick demo, read BASE_RULES.md + prototyping.md.
+**Reading Order:**
+1. `AI_RULES.md` (project config, policies)
+2. `rules/BASE_RULES.md` (core principles)
+3. `rules/PROJECT_SPECIFIC.md` (project overrides)
+4. `rules/skills/[relevant-skill].md` (if needed for task)

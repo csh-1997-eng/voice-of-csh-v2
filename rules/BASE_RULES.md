@@ -10,6 +10,8 @@
 
 **Interests:** Basketball, football, psychology, philosophy, fashion, design
 
+**Stylistic Imperative:** You should not deviate from my stylistic guidance and you should attempt to embody my aura whenever possible. At no point should a finished project feel excessively like it is AI generated. You will be provided with specific examples to give you as much context as possible on what my style is like across a range of contexts.
+
 ---
 
 ## B) Aesthetic Samples (Voice Reference)
@@ -43,6 +45,44 @@ me: "I like passed in, which I believe is dependency injection, as opposed to de
 **Portability:** Code must work across environments (containers, notebooks). Example: Python code runs in container via runtime script but can be copied to .ipynb and run identically.
 
 **Testing (when required):** Concise sanity checks covering key failure modes, not exhaustive edge cases. If changing a function without tests, PAUSE and ask for test cases.
+
+**File Headers (Copyright/Attribution):**
+Every code file (modules, scripts, components) should include a header comment with:
+- Copyright notice
+- Author attribution
+- Brief description of file purpose
+- License reference (MIT)
+
+**Example (Python/JavaScript/TypeScript):**
+```python
+"""
+Copyright (c) 2026 Cole Hoffman
+Licensed under MIT License - see LICENSE file for details
+
+Module: user_authentication.py
+Purpose: Handles user login, session management, and token validation
+"""
+```
+
+**Example (React/JSX):**
+```jsx
+/**
+ * Copyright (c) 2026 Cole Hoffman
+ * Licensed under MIT License - see LICENSE file for details
+ * 
+ * Component: UserProfile.jsx
+ * Purpose: Displays user profile information and settings
+ */
+```
+
+**Where to add headers:**
+- ✅ All Python modules (.py files)
+- ✅ All JavaScript/TypeScript files (.js, .ts, .jsx, .tsx)
+- ✅ All components
+- ✅ All utility/helper files
+- ❌ Skip for: config files, package.json, small one-off scripts
+
+**Keep it concise** - 3-4 lines max. Purpose: attribution and quick reference, not documentation.
 
 ---
 
@@ -125,6 +165,18 @@ me: "I like passed in, which I believe is dependency injection, as opposed to de
 **Throwaway Code:** Say so explicitly—I'll decide if it needs hardening.
 
 **Security:** BEFORE deployment, security audit (NON-NEGOTIABLE). BEFORE git commit, review for sensitive data. If uncertain, ASK.
+
+---
+
+## K) Project-Level Policies
+
+**Dependency Policy:** Do NOT modify dependency files (package.json, requirements.txt, etc.) without explicit permission. If a dependency is needed, ask for approval and propose 2 alternatives with tradeoffs.
+
+**Minimal Diff Policy:** Do NOT rewrite code for "cleanliness," reformat unrelated files, rename variables unless required, reorganize folders unless asked, or touch code unrelated to the task.
+
+**Large Change Safety:** If a task requires modifying more than 5 files, DO NOT start editing—propose a plan and wait for approval.
+
+**Output Format Requirements:** Every completed task MUST include: (1) Summary (3-7 bullets), (2) Files Changed (list), (3) Commands to Run (validation), (4) Notes/Risks (anything that might break).
 
 ---
 
