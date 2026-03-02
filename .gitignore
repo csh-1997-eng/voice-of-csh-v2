@@ -37,3 +37,11 @@ pnpm-debug.log*
 .DS_Store
 
 dev_resources/
+
+# AI Rules - PRIVATE
+rules/BASE_RULES.md
+rules/skills/
+/.cursor/rules/
+/CLAUDE.md
+/AGENTS.md
+.cursor/
