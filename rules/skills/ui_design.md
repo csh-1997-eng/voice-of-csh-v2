@@ -4,77 +4,84 @@ Load this when: building interfaces, styling components, designing layouts, impl
 
 ---
 
-## Design Philosophy
+## Doctrine Summary
 
-**Style:** Apple aesthetic—sleek, minimalist, refined, elegant.
-
-**Colors:** Default palette is grey, silver, black, white. Use tiny pops of color for accents (CTAs, highlights). Avoid rainbow vomit. Avoid 90s plainness.
-
-**Principle:** "Trying too much" is uglier than minimalism. But plain white MS Paint is also bad. Find the balance.
-
----
-
-## Layout Patterns
-
-**Spacing:** Generous whitespace. Don't cram. Let elements breathe.
-
-**Hierarchy:** Clear visual hierarchy—important things bigger/bolder, secondary things muted.
-
-**Alignment:** Everything aligns to a grid. No random positioning.
-
-**Typography:** Max 2 fonts. Use weight/size for hierarchy, not different fonts.
+Apply the ENOCH doctrine from `rules/BASE_RULES.md`:
+- Authored, not assembled
+- Authority through reduction
+- Typography as structure
+- Spatial containment
+- Directional, purposeful motion
+- Logic-first hierarchy
 
 ---
 
-## Component Style
+## Surface Mode Selection
 
-**Buttons:** Rounded corners, subtle shadows, clear hover states. Primary actions stand out (slight color), secondary actions muted (grey/outline).
+Pick one mode before designing:
+- Marketing mode: editorial pacing, narrative sections, large typographic anchors, cultural/institutional tone
+- Product mode: simple shell with command-focused interior, fast clarity, control-room feel in deep workflows
 
-**Inputs:** Clean borders, clear focus states, inline validation feedback.
-
-**Cards:** Subtle shadows or borders. Avoid heavy drop shadows.
-
-**Navigation:** Simple, obvious. Don't hide things in hamburger menus unless mobile.
+If the page mixes both, separate sections clearly so tone does not blur.
 
 ---
 
-## Color Usage
+## Layout Heuristics
 
-**Base:** Start with greys/blacks for text and backgrounds.
-
-**Accent:** One primary color for CTAs, links, key actions. Use sparingly.
-
-**States:** Subtle color shifts for hover/active/disabled (don't go crazy).
-
-**Errors:** Red, but muted. Warnings: amber. Success: green (all subtle, not neon).
+- Favor vertical storytelling and anchored hero statements.
+- Use asymmetric balance when it strengthens hierarchy.
+- Build strong section transitions (spacing, scale, contrast), not card grids everywhere.
+- Avoid card soup and component sprawl.
+- Stack by importance first; apply grid second.
 
 ---
 
-## Responsive Design (Web Interfaces)
+## Typography Rules
 
-**Approach:** Design for multiple screen sizes. Start with smallest screen, scale up.
-
-**Breakpoints:** Mobile, tablet, desktop. Keep it simple - don't over-complicate with 10 breakpoints.
-
-**Touch Targets:** On touch devices (phones, tablets), buttons/links should be min 44x44px for easy tapping.
-
-**Flexibility:** Layouts should adapt gracefully. Use CSS Grid/Flexbox. Test on different viewport sizes.
+- Let type carry structure before adding visual decoration.
+- Limit font families (1-2 max), but use scale/weight rhythm aggressively.
+- Headlines should establish authority quickly; body text should stay calm and legible.
+- Decorative graphics never outrank core text hierarchy.
 
 ---
 
-## What to Avoid
+## Space, Density, and Interaction
 
-- Gradients (unless very subtle)
-- Heavy shadows
-- Overly rounded corners (slight rounding fine, pill shapes excessive)
-- Animations that distract (subtle transitions fine, bouncing/spinning bad)
-- Too many colors
-- Inconsistent spacing
+- Treat whitespace as containment and tension, not filler.
+- Use density intentionally:
+  - Landing: low density, high weight
+  - Product: medium density, high clarity
+  - Deep tools: high density, high order
+- Never ship dense UI with weak hierarchy.
+- Interactions should feel decisive and calm; favor clear state shifts over playful microinteractions.
 
 ---
 
-## Deliverable
+## Motion and Color
 
-**Goal:** Interface that looks clean, feels Apple-esque, doesn't distract from content.
+- Motion must communicate state change, depth, or reveal.
+- Keep animation subtle, directional, and purposeful.
+- Color is signal: neutral base, sparse accent, occasional dramatic contrast.
+- Do not use color as decoration when hierarchy can do the job.
 
-**Quality Bar:** Would I be embarrassed showing this in a demo? If no, ship it.
+---
+
+## Responsive Implementation (Web)
+
+- Mobile-first layout decisions, then scale upward.
+- Keep breakpoints practical (mobile/tablet/desktop baseline).
+- Maintain hierarchy and pacing across sizes; do not collapse into generic card stacks.
+- Ensure tap targets are usable on touch devices (44x44px minimum).
+
+---
+
+## Design QA Checklist
+
+Before finalizing, verify:
+- Does this feel authored?
+- Does this feel inevitable?
+- Does this feel intellectually calm?
+- Is hierarchy obvious without extra explanation?
+- Is motion carrying meaning rather than decoration?
+
+If not, reduce and restack.

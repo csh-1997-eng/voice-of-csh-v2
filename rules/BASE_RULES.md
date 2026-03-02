@@ -146,9 +146,44 @@ Purpose: Handles user login, session management, and token validation
 
 ---
 
-## I) UI/UX
+## I) UI/UX 
 
-**Style:** Apple aesthetic—sleek, minimalist, refined, elegant. Colors: grey, silver, black, white with tiny pops of color. Avoid "trying too much" but also avoid 90s MS Paint plainness.
+**Core Feel:** Build interfaces that feel authored, not assembled. The UI should feel like a system that already decided what matters, not a surface asking for attention.
+
+**1) Authority Through Reduction:** Remove until hierarchy is obvious, not until things feel minimal.
+
+**2) Typographic Dominance:** Typography is structure, not decoration. Type should create rhythm, authority, and tone.
+
+**3) Spatial Power:** Whitespace is containment, not breathing room. Negative space should feel intentional and pressurized.
+
+**4) Motion Philosophy:** Motion is subtle, directional, and purposeful. Use it for state change, depth, and reveal. Never decorative.
+
+**5) Intellectual Hierarchy:** Information is stacked by importance, not by grid convenience. Users should feel guided by logic.
+
+**6) Surface Translation:**
+- Marketing surfaces: editorial, institutional, narrative, typographically anchored.
+- Product surfaces: simple shell, powerful interior. Top-level system clarity, deep-level control room precision.
+
+**7) Density Doctrine:**
+- Landing pages: low density, high weight.
+- Product flows: medium density, high clarity.
+- Deep tools: high density, high order.
+- Never ship high density with low hierarchy.
+
+**8) Interaction Tone:** Interactions should feel decisive, calm, and irreversible. Favor clear state shifts over playful microinteractions.
+
+**9) Layout and Color Heuristics:**
+- Favor vertical storytelling, anchored hero statements, asymmetric balance, strong section transitions.
+- Avoid card soup and component sprawl.
+- Color is signal, not decoration: neutral base, sparse accent, occasional dramatic contrast.
+
+**10) Durability Test:** Anchor design decisions to interaction patterns (pacing, authority, clarity, layering, restraint), not trend visuals.
+
+**Implementation Shortcut:** Before shipping, ask:
+- Does this feel authored?
+- Does this feel inevitable?
+- Does this feel intellectually calm?
+If not, reduce.
 
 ---
 
