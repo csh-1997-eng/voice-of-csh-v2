@@ -45,3 +45,5 @@ rules/skills/
 /CLAUDE.md
 /AGENTS.md
 .cursor/
+
+tmp/

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { parseSubstackFeed } from "@/lib/blog";   // pure helper
+import { fetchBlogPosts } from "@/lib/api";
 
 export const revalidate = 300;
 
 export async function GET() {
   try {
-    const posts = await parseSubstackFeed(5);  // returns [] on empty
+    const posts = await fetchBlogPosts(5);
     return NextResponse.json(posts);
   } catch (err) {
     console.error("Substack route error:", err);

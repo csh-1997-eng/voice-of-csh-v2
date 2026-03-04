@@ -1,5 +1,5 @@
-# AI RULES — Project: {{PROJECT_NAME}}
-Stack: {{STACK}}
+# AI RULES — Project: Cole Hoffman Personal Website (aka The Margin)
+Stack: next.js + anthropic + supabase
 
 This file contains project-specific configurations and commands.
 
@@ -13,27 +13,27 @@ This file contains project-specific configurations and commands.
 
 ## Project Configuration
 
-**Project Name:** {{PROJECT_NAME}}
-**Stack:** {{STACK}}
+**Project Name:** Cole Hoffman
+**Stack:** next.js + anthropic + supabase
 
 ---
 
 ## Repo-Specific Commands
 
 ### Format
-{{FORMAT_CMD}}
+pnpm format
 
 ### Lint
-{{LINT_CMD}}
+pnpm lint
 
 ### Typecheck
-{{TYPECHECK_CMD}}
+pnpm build
 
 ### Tests
-{{TEST_CMD}}
+pnpm dev
 
 ### Build
-{{BUILD_CMD}}
+pnpm build
 
 ---
 

@@ -1,6 +1,25 @@
 // lib/youtube.ts
 import { Video } from "@/lib/data-types";
 
+function mapSearchItemsToVideos(items: any[] = []): Video[] {
+  return items
+    .map((item: any) => {
+      const s = item?.snippet
+      const id = item?.id?.videoId || s?.resourceId?.videoId
+      if (!id || !s) return null
+
+      return {
+        id,
+        title: s.title,
+        description: s.description,
+        date: s.publishedAt,
+        thumbnail: s.thumbnails?.medium?.url || s.thumbnails?.high?.url || "/placeholder.svg",
+        url: `https://www.youtube.com/watch?v=${id}`,
+      } satisfies Video
+    })
+    .filter(Boolean) as Video[]
+}
+
 export async function getLatestVideos(limit = 5): Promise<Video[]> {
   try {
     const { YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID } =
@@ -38,27 +57,31 @@ export async function getLatestVideos(limit = 5): Promise<Video[]> {
 
     if (!plRes.ok) {
       const body = await plRes.json().catch(() => ({}));
-      throw new Error(
-        `playlistItems ${plRes.status} – ${body.error?.errors?.[0]?.reason ?? "unknown"}`
-      );
+      const reason = body.error?.errors?.[0]?.reason ?? "unknown"
+
+      // Some channels return stale/invalid uploads playlist IDs. Fall back to channel search.
+      if (plRes.status === 404 && reason === "playlistNotFound") {
+        const fallbackRes = await fetch(
+          `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${YOUTUBE_CHANNEL_ID}&order=date&maxResults=${limit}&type=video&key=${YOUTUBE_API_KEY}`
+        )
+
+        if (!fallbackRes.ok) {
+          const fallbackBody = await fallbackRes.json().catch(() => ({}))
+          throw new Error(
+            `search fallback ${fallbackRes.status} – ${fallbackBody.error?.errors?.[0]?.reason ?? "unknown"}`
+          )
+        }
+
+        const fallbackJson = await fallbackRes.json()
+        return mapSearchItemsToVideos(fallbackJson?.items)
+      }
+
+      throw new Error(`playlistItems ${plRes.status} – ${reason}`);
     }
 
     const pl = await plRes.json();
 
-    return (
-      pl.items
-        ?.map((v: any) => v?.snippet)
-        ?.filter(Boolean)
-        ?.map(
-          (s: any): Video => ({
-            id: s.resourceId.videoId,
-            title: s.title,
-            date: s.publishedAt,
-            thumbnail: s.thumbnails.medium.url,
-            url: `https://www.youtube.com/watch?v=${s.resourceId.videoId}`,
-          })
-        ) ?? []
-    );
+    return mapSearchItemsToVideos(pl?.items);
   } catch (err) {
     // One central place to log; UI will show "No videos yet" because we return []
     console.error("YouTube getLatestVideos error:", err);

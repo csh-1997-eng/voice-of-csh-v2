@@ -14,17 +14,16 @@ export default async function RecentBlogPosts({
   limit = 3,
 }: RecentBlogPostsProps) {
   // graceful error handling via safeFetch
-  const posts: Post[] = (await safeFetch(fetchBlogPosts()))
-    .slice(0, limit);
+  const posts: Post[] = await safeFetch(fetchBlogPosts(limit));
 
   return (
     <div>
       {/* ---------- section header ---------- */}
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Recent Blog Posts</h2>
+        <h2 className="font-display text-4xl leading-none">Recent Substack Content</h2>
         <Link
           href="/blog"
-          className="text-sm text-primary hover:underline"
+          className="text-sm text-[#C45A3C] hover:underline"
         >
           View all posts
         </Link>
@@ -37,7 +36,7 @@ export default async function RecentBlogPosts({
         /* ---------- rich card grid ---------- */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {posts.map((post) => (
-            <Card key={post.id}>
+            <Card key={post.id} className="border-[#E8E5E0]/15 bg-[#111111]/70">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">
                   <Link
@@ -49,7 +48,7 @@ export default async function RecentBlogPosts({
                   </Link>
                 </CardTitle>
 
-                <CardDescription className="flex items-center gap-3 text-xs">
+                <CardDescription className="flex items-center gap-3 text-xs text-[#d2ccc3]">
                   <span className="flex items-center gap-1">
                     <CalendarIcon className="h-3 w-3" />
                     {post.date}
@@ -62,7 +61,7 @@ export default async function RecentBlogPosts({
               </CardHeader>
 
               <CardContent>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-[#d2ccc3]">
                   {post.excerpt}
                 </p>
               </CardContent>
@@ -72,8 +71,8 @@ export default async function RecentBlogPosts({
                   {post.tags.map((tag) => (
                     <Badge
                       key={tag}
-                      variant="secondary"
-                      className="text-xs"
+                      variant="outline"
+                      className="text-xs border-[#E8E5E0]/25 text-[#d2ccc3]"
                     >
                       {tag}
                     </Badge>

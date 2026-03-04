@@ -1,4 +1,3 @@
-"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Youtube, FileText, Twitter } from "lucide-react"
@@ -76,7 +75,7 @@ export default async function LiveFeed() {
             variant="outline"
             className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border-blue-200 dark:border-blue-800"
           >
-            Blog
+            Substack
           </Badge>
         )
       case "youtube":

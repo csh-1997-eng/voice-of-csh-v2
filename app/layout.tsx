@@ -1,17 +1,27 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Playfair_Display } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
+import { siteConfig } from "@/lib/site"
 
-const inter = Inter({ subsets: ["latin"] })
+const display = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["700", "800"],
+})
+
+const body = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+})
 
 export const metadata: Metadata = {
-  title: "Voice of Cole Hoffman",
-  description: "Aggregating my online presence in one place",
-    generator: 'csh-eng-97'
+  title: siteConfig.name,
+  description: siteConfig.description,
+  generator: "csh-eng-97",
 }
 
 export default function RootLayout({
@@ -21,8 +31,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <body className={`${display.variable} ${body.variable} font-body`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-1">{children}</main>

@@ -29,7 +29,13 @@ export default function RefreshButton() {
   }
 
   return (
-    <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isRefreshing} className="gap-2">
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleRefresh}
+      disabled={isRefreshing}
+      className="gap-2 border-[#E8E5E0]/35 bg-transparent text-[#E8E5E0] hover:bg-[#E8E5E0]/10"
+    >
       <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
       {isRefreshing ? "Refreshing..." : "Refresh Content"}
     </Button>

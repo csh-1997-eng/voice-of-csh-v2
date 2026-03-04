@@ -1,66 +1,128 @@
-"use client";
-import { useState, useRef } from "react";
+"use client"
 
-export default function ChatbotWidget() {
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [threadId, setThreadId] = useState<string>();
-  const [log, setLog] = useState<string[]>([]);
-  const [sending, setSending] = useState(false);
+import { FormEvent, useEffect, useRef, useState } from "react"
 
-  const send = async (text: string) => {
-    setSending(true);
-    const r = await fetch("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({ threadId, message: text }),
-    }).then(r => r.json());
-
-    setThreadId(r.threadId);
-    setLog(l => [...l, "🧑 " + text, "🤖 " + r.reply]);
-    setSending(false);
-  };
-
-  const upload = async () => {
-    const file = fileRef.current?.files?.[0];
-    if (!file) return;
-
-    const fd = new FormData();
-    fd.append("file", file);
-
-    await fetch("/api/chat/upload", { method: "POST", body: fd });
-    alert("File uploaded & indexed 🎉  Ask away!");
-  };
-
-  return (
-    <div className="border rounded-xl p-4 space-y-2">
-      <h2 className="font-semibold">Ask‑my‑Files Chatbot</h2>
-
-      <input type="file" ref={fileRef} className="block" />
-      <button onClick={upload} className="btn mt-2">Upload</button>
-
-      <hr className="my-3"/>
-
-      <ChatBox disabled={sending} onSend={send} />
-
-      <div className="prose max-h-64 overflow-y-auto">
-        {log.map((l, i) => <p key={i}>{l}</p>)}
-      </div>
-    </div>
-  );
+type ChatMessage = {
+  id: string
+  role: "user" | "assistant"
+  text: string
 }
 
-function ChatBox({ disabled, onSend }:{ disabled:boolean; onSend:(t:string)=>void }) {
-  const [text, setText] = useState("");
+export default function ChatbotWidget() {
+  const [threadId, setThreadId] = useState<string>()
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: "seed-1",
+      role: "assistant",
+      text: "I am Voice of Cole. Ask me about projects, writing, strategy, or what I am building next.",
+    },
+  ])
+  const [input, setInput] = useState("")
+  const [sending, setSending] = useState(false)
+  const scrollerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    scrollerRef.current?.scrollTo({ top: scrollerRef.current.scrollHeight, behavior: "smooth" })
+  }, [messages, sending])
+
+  const send = async (text: string) => {
+    const prompt = text.trim()
+    if (!prompt || sending) return
+
+    setSending(true)
+    setMessages((prev) => [...prev, { id: `u-${Date.now()}`, role: "user", text: prompt }])
+    setInput("")
+
+    // Service temporarily disabled — restore the fetch block below to re-enable
+    setMessages((prev) => [
+      ...prev,
+      { id: `a-${Date.now()}`, role: "assistant", text: "Voice of Cole is offline for maintenance. Check back soon." },
+    ])
+    setSending(false)
+
+    // try {
+    //   const res = await fetch("/api/chat", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ threadId, message: prompt }),
+    //   })
+    //   const data = (await res.json()) as { threadId?: string; reply?: string; error?: string }
+    //   if (!res.ok || !data.reply) throw new Error(data.error || "Unable to process chat request.")
+    //   if (data.threadId) setThreadId(data.threadId)
+    //   setMessages((prev) => [...prev, { id: `a-${Date.now()}`, role: "assistant", text: data.reply as string }])
+    // } catch (error) {
+    //   setMessages((prev) => [...prev, { id: `a-${Date.now()}`, role: "assistant", text: "Service unavailable at this time." }])
+    // } finally {
+    //   setSending(false)
+    // }
+  }
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault()
+    void send(input)
+  }
+
   return (
-    <form onSubmit={e => { e.preventDefault(); onSend(text); setText(""); }}>
-      <input
-        value={text}
-        disabled={disabled}
-        onChange={e => setText(e.target.value)}
-        className="border rounded px-2 py-1 w-full"
-        placeholder="Ask something about your file..."
-      />
-    </form>
-  );
+    <div className="flex h-[68vh] min-h-[560px] flex-col rounded-2xl border border-[#E8E5E0]/16 bg-[#0B0B0B]/92">
+      <div className="flex items-center justify-between border-b border-[#E8E5E0]/12 px-4 py-3 md:px-5">
+        <p className="text-xs uppercase tracking-[0.18em] text-[#C45A3C]">Live Session</p>
+        <p className="text-xs text-[#bfb7ad]">{sending ? "Thinking..." : "Ready"}</p>
+      </div>
+
+      <div ref={scrollerRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-5 md:px-5">
+        {messages.map((m) => (
+          <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+            <div
+              className={`max-w-[88%] rounded-2xl px-4 py-3 text-sm leading-relaxed md:max-w-[80%] ${
+                m.role === "user"
+                  ? "border border-[#C45A3C]/45 bg-[#C45A3C]/18 text-[#F5DDD5]"
+                  : "border border-[#E8E5E0]/14 bg-[#141414]/90 text-[#E8E5E0]"
+              }`}
+            >
+              {m.text}
+            </div>
+          </div>
+        ))}
+
+        {sending ? (
+          <div className="flex justify-start">
+            <div className="rounded-2xl border border-[#E8E5E0]/14 bg-[#141414]/90 px-4 py-3 text-sm text-[#d2ccc3]">
+              Generating response...
+            </div>
+          </div>
+        ) : null}
+      </div>
+
+      <form onSubmit={onSubmit} className="border-t border-[#E8E5E0]/12 p-4 md:p-5">
+        <div className="rounded-2xl border border-[#E8E5E0]/18 bg-[#111111] p-2">
+          <textarea
+            value={input}
+            disabled={sending}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault()
+                void send(input)
+              }
+            }}
+            placeholder="Ask Voice of Cole anything..."
+            rows={4}
+            className="w-full resize-none bg-transparent px-3 py-2 text-sm text-[#E8E5E0] outline-none placeholder:text-[#9f968c]"
+          />
+          <div className="mt-2 flex items-center justify-between border-t border-[#E8E5E0]/10 px-3 pt-2">
+            <p className="text-xs text-[#9f968c]">Enter to send, Shift+Enter for newline</p>
+            <button
+              type="submit"
+              disabled={sending || !input.trim()}
+              className="rounded-full border border-[#C45A3C]/45 px-4 py-1.5 text-xs uppercase tracking-[0.14em] text-[#F5DDD5] transition hover:border-[#C45A3C] hover:bg-[#C45A3C]/18 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  )
 }
 
 
