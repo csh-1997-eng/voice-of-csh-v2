@@ -39,8 +39,7 @@ pnpm-debug.log*
 dev_resources/
 
 # AI Rules - PRIVATE
-rules/BASE_RULES.md
-rules/skills/
+rules/
 /.cursor/rules/
 /CLAUDE.md
 /AGENTS.md
