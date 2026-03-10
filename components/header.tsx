@@ -18,6 +18,7 @@ const navigation = [
 
 export default function Header() {
   const pathname = usePathname()
+  const isRecruiterSafeRoute = pathname === "/recruiter"
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
@@ -34,6 +35,29 @@ export default function Header() {
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
+
+  if (isRecruiterSafeRoute) {
+    return (
+      <header className="border-b border-[#E8E5E0]/10 bg-[#0A0A0A]">
+        <div className="container flex items-center justify-between gap-4 py-4">
+          <Link href="/" className="text-sm font-medium tracking-[0.08em] text-[#E8E5E0]">
+            Cole Hoffman
+          </Link>
+          <nav className="flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.14em] text-[#d2ccc3]">
+            <Link href="/resume" className="hover:text-[#C45A3C]">
+              Work
+            </Link>
+            <Link href="/blog" className="hover:text-[#C45A3C]">
+              Blog
+            </Link>
+            <a href="/content/resume_fde_se_csh.pdf" target="_blank" rel="noopener noreferrer" className="hover:text-[#C45A3C]">
+              PDF Resume
+            </a>
+          </nav>
+        </div>
+      </header>
+    )
+  }
 
   return (
     <header

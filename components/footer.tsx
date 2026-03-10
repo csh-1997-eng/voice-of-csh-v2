@@ -11,6 +11,12 @@ export default function Footer() {
             <p className="text-sm text-[#d2ccc3]">
               © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
             </p>
+            <p className="mt-2 text-xs text-[#bfb7ad]">
+              Locked-down browser fallback:{" "}
+              <Link href="/recruiter" className="underline underline-offset-2 hover:text-[#C45A3C]">
+                /recruiter
+              </Link>
+            </p>
           </div>
           <div className="flex space-x-4">
             <Link href={siteConfig.links.github} target="_blank" rel="noopener noreferrer">

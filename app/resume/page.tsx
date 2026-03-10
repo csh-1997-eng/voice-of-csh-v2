@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { siteConfig } from "@/lib/site"
 
@@ -191,6 +192,13 @@ export default function ResumePage() {
               >
                 GitHub
               </a>
+              .
+            </p>
+            <p className="text-sm text-[#d2ccc3]">
+              Need a low-complexity version for locked-down corporate browsers? Use{" "}
+              <Link href="/recruiter" className="text-[#C45A3C] underline-offset-2 hover:underline">
+                /recruiter
+              </Link>
               .
             </p>
           </div>
