@@ -46,3 +46,4 @@ rules/
 .cursor/
 
 tmp/
+.env*.local
