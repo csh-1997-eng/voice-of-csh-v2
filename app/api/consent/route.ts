@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-
-const SUPABASE_URL = process.env.SUPABASE_URL!
-const SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY!
+import { formatSupabaseFetchError, getServerSupabaseConfig } from "@/lib/supabase-server"
 
 export async function POST(req: NextRequest) {
   const userAgent = req.headers.get("user-agent") ?? ""
@@ -10,16 +8,23 @@ export async function POST(req: NextRequest) {
     req.headers.get("x-real-ip") ??
     "unknown"
 
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/consent_logs`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: SUPABASE_SECRET_KEY,
-      Authorization: `Bearer ${SUPABASE_SECRET_KEY}`,
-    },
-    body: JSON.stringify({ ip_address: ip, user_agent: userAgent, consent_version: "v1", consented: true }),
-  })
+  const config = getServerSupabaseConfig()
 
-  if (!res.ok) return NextResponse.json({ error: "Failed to log consent" }, { status: 500 })
-  return NextResponse.json({ ok: true })
+  try {
+    const res = await fetch(`${config.url}/rest/v1/consent_logs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: config.key,
+        Authorization: `Bearer ${config.key}`,
+      },
+      body: JSON.stringify({ ip_address: ip, user_agent: userAgent, consent_version: "v1", consented: true }),
+    })
+
+    if (!res.ok) return NextResponse.json({ error: "Failed to log consent" }, { status: 500 })
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    console.error("/api/consent error:", formatSupabaseFetchError(error, config))
+    return NextResponse.json({ error: "Failed to log consent" }, { status: 500 })
+  }
 }

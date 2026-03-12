@@ -1,3 +1,5 @@
+import { formatSupabaseFetchError, getServerSupabaseConfig } from "@/lib/supabase-server"
+
 type RagDocumentInput = {
   externalId: string
   title: string
@@ -20,19 +22,9 @@ const DEFAULT_CHUNK_OVERLAP = Number(process.env.RAG_CHUNK_OVERLAP || 180)
 const DEFAULT_MATCH_COUNT = Number(process.env.RAG_MATCH_COUNT || 6)
 const DEFAULT_MATCH_THRESHOLD = Number(process.env.RAG_MIN_SIMILARITY || 0.2)
 
-function getSupabaseConfig() {
-  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serverKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !serverKey) {
-    throw new Error(
-      "Supabase is not configured for RAG access. Set SUPABASE_URL and SUPABASE_SECRET_KEY (or legacy SUPABASE_SERVICE_ROLE_KEY).",
-    )
-  }
-  return { url, key: serverKey }
-}
-
 async function supabaseFetch(path: string, init?: RequestInit) {
-  const { url, key } = getSupabaseConfig()
+  const config = getServerSupabaseConfig()
+  const { url, key } = config
   const headers: Record<string, string> = {
     apikey: key,
     "Content-Type": "application/json",
@@ -45,12 +37,17 @@ async function supabaseFetch(path: string, init?: RequestInit) {
     headers.Authorization = `Bearer ${key}`
   }
 
-  const res = await fetch(`${url}/rest/v1${path}`, {
-    ...init,
-    headers,
-    cache: "no-store",
-  })
-  return res
+  try {
+    return await fetch(`${url}/rest/v1${path}`, {
+      ...init,
+      headers,
+      cache: "no-store",
+    })
+  } catch (error) {
+    throw new Error(formatSupabaseFetchError(error, config), {
+      cause: error instanceof Error ? error : undefined,
+    })
+  }
 }
 
 function normalizeText(text: string) {
