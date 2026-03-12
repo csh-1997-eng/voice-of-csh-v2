@@ -2,10 +2,55 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react"
 
+const CONSENT_KEY = "voice_of_cole_consented_v1"
+
 type ChatMessage = {
   id: string
   role: "user" | "assistant"
   text: string
+}
+
+function ConsentModal({ onAccept, onDecline }: { onAccept: () => void; onDecline: () => void }) {
+  const [checked, setChecked] = useState(false)
+
+  return (
+    <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-[#0B0B0B]/80 backdrop-blur-sm">
+      <div className="mx-4 w-full max-w-sm rounded-2xl border border-[#E8E5E0]/16 bg-[#141414] p-6">
+        <p className="mb-1 text-xs uppercase tracking-[0.18em] text-[#C45A3C]">Before you chat</p>
+        <h2 className="mb-3 font-serif text-lg text-[#E8E5E0]">Data Notice</h2>
+        <p className="mb-5 text-sm leading-relaxed text-[#bfb7ad]">
+          This chat is powered by OpenAI. Your messages may be used by OpenAI to improve their models. Do not share
+          sensitive or confidential information.
+        </p>
+        <label className="mb-5 flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={(e) => setChecked(e.target.checked)}
+            className="mt-0.5 h-4 w-4 accent-[#C45A3C]"
+          />
+          <span className="text-sm text-[#E8E5E0]">
+            I understand my messages may be used by OpenAI to train their models.
+          </span>
+        </label>
+        <div className="flex gap-3">
+          <button
+            onClick={onDecline}
+            className="flex-1 rounded-full border border-[#E8E5E0]/18 px-4 py-2 text-xs uppercase tracking-[0.14em] text-[#9f968c] transition hover:border-[#E8E5E0]/40"
+          >
+            Decline
+          </button>
+          <button
+            disabled={!checked}
+            onClick={onAccept}
+            className="flex-1 rounded-full border border-[#C45A3C]/45 px-4 py-2 text-xs uppercase tracking-[0.14em] text-[#F5DDD5] transition hover:border-[#C45A3C] hover:bg-[#C45A3C]/18 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            I Agree
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function ChatbotWidget() {
@@ -19,11 +64,44 @@ export default function ChatbotWidget() {
   ])
   const [input, setInput] = useState("")
   const [sending, setSending] = useState(false)
+  const [hasConsented, setHasConsented] = useState(false)
+  const [showConsent, setShowConsent] = useState(false)
+  const [pendingMessage, setPendingMessage] = useState("")
   const scrollerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setHasConsented(localStorage.getItem(CONSENT_KEY) === "true")
+  }, [])
 
   useEffect(() => {
     scrollerRef.current?.scrollTo({ top: scrollerRef.current.scrollHeight, behavior: "smooth" })
   }, [messages, sending])
+
+  const handleConsent = async () => {
+    localStorage.setItem(CONSENT_KEY, "true")
+    setHasConsented(true)
+    setShowConsent(false)
+    await fetch("/api/consent", { method: "POST" })
+    if (pendingMessage) {
+      setPendingMessage("")
+      await send(pendingMessage)
+    }
+  }
+
+  const handleDecline = () => {
+    setShowConsent(false)
+    setPendingMessage("")
+  }
+
+  const tryToSend = (text: string) => {
+    if (!text.trim()) return
+    if (!hasConsented) {
+      setPendingMessage(text)
+      setShowConsent(true)
+      return
+    }
+    void send(text)
+  }
 
   const send = async (text: string) => {
     const prompt = text.trim()
@@ -33,37 +111,31 @@ export default function ChatbotWidget() {
     setMessages((prev) => [...prev, { id: `u-${Date.now()}`, role: "user", text: prompt }])
     setInput("")
 
-    // Service temporarily disabled — restore the fetch block below to re-enable
-    setMessages((prev) => [
-      ...prev,
-      { id: `a-${Date.now()}`, role: "assistant", text: "Voice of Cole is offline for maintenance. Check back soon." },
-    ])
-    setSending(false)
-
-    // try {
-    //   const res = await fetch("/api/chat", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ threadId, message: prompt }),
-    //   })
-    //   const data = (await res.json()) as { threadId?: string; reply?: string; error?: string }
-    //   if (!res.ok || !data.reply) throw new Error(data.error || "Unable to process chat request.")
-    //   if (data.threadId) setThreadId(data.threadId)
-    //   setMessages((prev) => [...prev, { id: `a-${Date.now()}`, role: "assistant", text: data.reply as string }])
-    // } catch (error) {
-    //   setMessages((prev) => [...prev, { id: `a-${Date.now()}`, role: "assistant", text: "Service unavailable at this time." }])
-    // } finally {
-    //   setSending(false)
-    // }
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ threadId, message: prompt }),
+      })
+      const data = (await res.json()) as { threadId?: string; reply?: string; error?: string }
+      if (!res.ok || !data.reply) throw new Error(data.error || "Unable to process chat request.")
+      if (data.threadId) setThreadId(data.threadId)
+      setMessages((prev) => [...prev, { id: `a-${Date.now()}`, role: "assistant", text: data.reply as string }])
+    } catch (error) {
+      setMessages((prev) => [...prev, { id: `a-${Date.now()}`, role: "assistant", text: "Service unavailable at this time." }])
+    } finally {
+      setSending(false)
+    }
   }
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
-    void send(input)
+    tryToSend(input)
   }
 
   return (
-    <div className="flex h-[68vh] min-h-[560px] flex-col rounded-2xl border border-[#E8E5E0]/16 bg-[#0B0B0B]/92">
+    <div className="relative flex h-[68vh] min-h-[560px] flex-col rounded-2xl border border-[#E8E5E0]/16 bg-[#0B0B0B]/92">
+      {showConsent && <ConsentModal onAccept={handleConsent} onDecline={handleDecline} />}
       <div className="flex items-center justify-between border-b border-[#E8E5E0]/12 px-4 py-3 md:px-5">
         <p className="text-xs uppercase tracking-[0.18em] text-[#C45A3C]">Live Session</p>
         <p className="text-xs text-[#bfb7ad]">{sending ? "Thinking..." : "Ready"}</p>
@@ -102,7 +174,7 @@ export default function ChatbotWidget() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault()
-                void send(input)
+                tryToSend(input)
               }
             }}
             placeholder="Ask Voice of Cole anything..."
@@ -120,6 +192,9 @@ export default function ChatbotWidget() {
             </button>
           </div>
         </div>
+      <p className="mt-2 px-1 text-center text-[10px] text-[#9f968c]/60">
+        Your messages may be used by OpenAI to improve their models.
+      </p>
       </form>
     </div>
   )
